@@ -1,5 +1,6 @@
 require "dotenv/parser"
 require "dotenv/environment"
+require "dotenv/missing_keys"
 
 # The top level Dotenv module. The entrypoint for the application logic.
 module Dotenv
@@ -36,6 +37,14 @@ module Dotenv
     end
   end
 
+  # same as `overload`, but raises Errno::ENOENT if any files don't exist
+  def overload!(*filenames)
+    with(*filenames) do |f|
+      env = Environment.new(f, false)
+      instrument("dotenv.overload", env: env) { env.apply! }
+    end
+  end
+
   # Internal: Helper to expand list of filenames.
   #
   # Returns a hash of all the loaded environment variables.
@@ -45,6 +54,12 @@ module Dotenv
     filenames.reduce({}) do |hash, filename|
       hash.merge!(yield(File.expand_path(filename)) || {})
     end
+  end
+
+  def require_keys(*keys)
+    missing_keys = keys.flatten - ::ENV.keys
+    return if missing_keys.empty?
+    raise MissingKeys, missing_keys
   end
 
   def instrument(name, payload = {}, &block)
