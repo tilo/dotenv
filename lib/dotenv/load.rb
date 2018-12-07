@@ -1,2 +1,2 @@
 require "dotenv"
-Dotenv.load
+Dotenv.overload

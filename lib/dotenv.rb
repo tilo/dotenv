@@ -11,6 +11,7 @@ module Dotenv
   module_function
 
   def load(*filenames)
+    deprecate('Fix your code: you want Dotenv.overload here')
     with(*filenames) do |f|
       ignoring_nonexistent_files do
         env = Environment.new(f, true)
@@ -21,6 +22,7 @@ module Dotenv
 
   # same as `load`, but raises Errno::ENOENT if any files don't exist
   def load!(*filenames)
+    deprecate('Fix your code: you want Dotenv.overload! here'
     with(*filenames) do |f|
       env = Environment.new(f, true)
       instrument("dotenv.load", env: env) { env.apply }
@@ -73,5 +75,13 @@ module Dotenv
   def ignoring_nonexistent_files
     yield
   rescue Errno::ENOENT
+  end
+
+  def deprecate(msg)
+    if defined?(ActiveSupport)
+      ActiveSupport::Deprecation.warn(msg)
+    else
+      logger.warn msg
+    end
   end
 end

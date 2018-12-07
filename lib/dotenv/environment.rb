@@ -18,7 +18,7 @@ module Dotenv
     end
 
     def apply
-      each { |k, v| ENV[k] ||= v }
+      each { |k, v| ENV[k] ||= v } # this is just wrong
     end
 
     def apply!

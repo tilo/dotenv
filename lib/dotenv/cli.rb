@@ -13,7 +13,7 @@ module Dotenv
     def run
       filenames = parse_filenames || []
       begin
-        Dotenv.load!(*filenames)
+        Dotenv.overload!(*filenames)
       rescue Errno::ENOENT => e
         abort e.message
       else

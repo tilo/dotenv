@@ -35,7 +35,14 @@ module Dotenv
     # This will get called during the `before_configuration` callback, but you
     # can manually call `Dotenv::Railtie.load` if you needed it sooner.
     def load
-      Dotenv.load(*dotenv_files)
+
+#      Dotenv.load(*dotenv_files)
+
+      Dotenv.overload(*dotenv_files)
+    end
+
+    def overload
+      Dotenv.overload(*dotenv_files)
     end
 
     # Internal: `Rails.root` is nil in Rails 4.1 before the application is
@@ -49,6 +56,9 @@ module Dotenv
     # instance, which means `Kernel#load` gets called here. We don't want that.
     def self.load
       instance.load
+    end
+    def self.overload
+      instance.overload
     end
 
     config.before_configuration { load }

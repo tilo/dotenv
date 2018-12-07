@@ -1,7 +1,7 @@
 desc "Load environment settings from .env"
 task :dotenv do
   require "dotenv"
-  Dotenv.load
+  Dotenv.overload
 end
 
 task environment: :dotenv
